@@ -6,4 +6,4 @@ pip install kivy
 pip install mediapipe
 pip install scikit-learn
 
-En caso de que mediapipe no instale open-cv instalalo manualmente con el sig comando: pip install opencv-python-headless)
+En caso de que mediapipe no instale open-cv instalalo manualmente con el sig comando: pip install opencv-python-headless
