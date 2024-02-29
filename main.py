@@ -32,7 +32,7 @@ class MyApp(App):
             self.model = model_dict['model']
 
             # Diccionario para mapear las etiquetas numéricas a los gestos
-            self.labels_dict = {0: 'A'}
+            self.labels_dict = {0: 'A',1:'E',2:'I',3:'O',4:'U'}
 
             self.detectar = ''
         except Exception as e:
