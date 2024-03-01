@@ -5,7 +5,7 @@ DIRECTORIO = './data'
 if not os.path.exists(DIRECTORIO):
     os.makedirs(DIRECTORIO)
 
-numero_clases = 1
+numero_clases = 5
 dataset_size = 100
 
 video_captura = cv2.VideoCapture(0,cv2.CAP_DSHOW)

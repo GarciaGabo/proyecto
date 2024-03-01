@@ -74,18 +74,18 @@ class MyApp(App):
         # Lee un fotograma del video
         ret, frame = self.video_captura.read()
 
-        # Si se capturo el fotograma correctamente haz el procedimiento correspondiente
+        # Si se capturó el fotograma correctamente, realiza el procedimiento correspondiente
         if ret:
-            # Voltea el fotograma horizontalmente (para evitar espejado)
-            frame = cv2.flip(frame, 0)
-
+            # Voltea el fotograma horizontalmente (para evitar el efecto espejo)
+            frame = cv2.flip(frame, 1)
+            
             # Convierte el fotograma de BGR a RGB
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             # Procesa el fotograma para detectar manos utilizando MediaPipe
             res = self.manos.process(frame_rgb)
 
-            # Si se detectaron manos en el fotograma realiza lo siguiente
+            # Si se detectaron manos en el fotograma, realiza lo siguiente
             if res.multi_hand_landmarks:
                 # Dibuja círculos en los puntos de referencia de las manos
                 for hand_landmarks in res.multi_hand_landmarks:
@@ -98,6 +98,9 @@ class MyApp(App):
                 prediction = self.model.predict([np.asarray(self.extract_hand_features(res.multi_hand_landmarks[0]))])
                 predicted_character = self.labels_dict[float(prediction[0])]
                 self.detectar = predicted_character
+
+            # Rota el fotograma en 90 grados en sentido antihorario
+            frame = cv2.rotate(frame, cv2.ROTATE_180)
 
             # Convierte el fotograma procesado en una textura de Kivy
             texture = self.convert_frame(frame)
