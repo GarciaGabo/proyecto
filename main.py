@@ -13,7 +13,6 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import pickle
-from sklearn.ensemble import RandomForestClassifier
 
 # Clase de la aplicación Kivy
 class MyApp(App):
@@ -28,11 +27,11 @@ class MyApp(App):
             self.manos = self.mp_manos.Hands()
 
             # Cargar el modelo RandomForestClassifier desde el archivo pickle
-            model_dict = pickle.load(open('model.p', 'rb'))
-            self.model = model_dict['model']
+            diccionario = pickle.load(open('model.p', 'rb'))
+            self.modelo = diccionario['model']
 
             # Diccionario para mapear las etiquetas numéricas a los gestos
-            self.labels_dict = {0: 'A',1:'E',2:'I',3:'O',4:'U'}
+            self.etiquetas = {0: 'A',1:'E',2:'I',3:'O',4:'U'}
 
             self.detectar = ''
         except Exception as e:
@@ -95,35 +94,35 @@ class MyApp(App):
                         cv2.circle(frame, (cx, cy), 4, (255, 0, 0), cv2.FILLED)
 
                 # Predecir el gesto utilizando el modelo RandomForestClassifier
-                prediction = self.model.predict([np.asarray(self.extract_hand_features(res.multi_hand_landmarks[0]))])
-                predicted_character = self.labels_dict[float(prediction[0])]
-                self.detectar = predicted_character
+                prediccion = self.modelo.predict([np.asarray(self.extract_caracteristicas(res.multi_hand_landmarks[0]))])
+                prediccion_letra = self.etiquetas[float(prediccion[0])]
+                self.detectar = prediccion_letra
 
             # Rota el fotograma en 90 grados en sentido antihorario
             frame = cv2.rotate(frame, cv2.ROTATE_180)
 
             # Convierte el fotograma procesado en una textura de Kivy
-            texture = self.convert_frame(frame)
+            textura = self.convert_frame(frame)
 
             # Asigna la textura al widget de imagen
-            self.video_image.texture = texture
+            self.video_image.texture = textura
             self.lbletra.text = f'{self.detectar}'
 
     # Método para extraer características de la mano
-    def extract_hand_features(self, hand_landmarks):
-        data_aux = []
+    def extract_caracteristicas(self, hand_landmarks):
+        datos = []
         for landmark in hand_landmarks.landmark:
             x = landmark.x
             y = landmark.y
-            data_aux.append(x)
-            data_aux.append(y)
-        return data_aux
+            datos.append(x)
+            datos.append(y)
+        return datos
 
     # Método para convertir un fotograma de OpenCV en una textura de Kivy
     def convert_frame(self, frame):
-        texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-        texture.blit_buffer(frame.tobytes(), colorfmt='bgr', bufferfmt='ubyte')
-        return texture
+        textura = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+        textura.blit_buffer(frame.tobytes(), colorfmt='bgr', bufferfmt='ubyte')
+        return textura
 
     # Método para detener la aplicación y liberar los recursos
     def stop(self, instance):
